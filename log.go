@@ -7,9 +7,20 @@ import (
 	"time"
 )
 
-func CheckErr(infoMsg string, f func() (any, error), okMsg string) {
+func CheckErr(infoMsg string, f interface{}, okMsg string) {
 	Log(INFO, infoMsg)
-	_, err := f()
+	var err error
+
+	switch fn := f.(type) {
+	case func() error:
+		err = fn()
+	case func() (interface{}, error):
+		_, err = fn()
+	default:
+		Log(ERRO, "Unsupported function type")
+		os.Exit(1)
+	}
+
 	if err != nil {
 		_, file, line, _ := runtime.Caller(1)
 		errMsg := fmt.Sprintf("%s:%d - %v", file, line, err)
