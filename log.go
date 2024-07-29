@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func CheckErr(infoMsg string, f func(interface{}, error), okMsg string) {
+func CheckErr(infoMsg string, f func() (interface{}, error), okMsg string) {
 	Log(INFO, infoMsg)
 	_, err := f()
 	if err != nil {
