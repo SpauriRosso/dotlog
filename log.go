@@ -7,29 +7,29 @@ import (
 	"time"
 )
 
-func CheckErr(infoMsg string, f interface{}, okMsg string) {
-	Log(INFO, infoMsg)
-	var err error
-
-	switch fn := f.(type) {
-	case func() error:
-		err = fn()
-	case func() (interface{}, error):
-		_, err = fn()
-	default:
-		Log(ERRO, "Unsupported function type")
-		os.Exit(1)
-	}
-
-	if err != nil {
-		_, file, line, _ := runtime.Caller(1)
-		errMsg := fmt.Sprintf("%s:%d - %v", file, line, err)
-		Log(ERRO, errMsg)
-		os.Exit(1)
-	} else {
-		Log(INFO, okMsg)
-	}
-}
+//func CheckErr(infoMsg string, f interface{}, okMsg string) {
+//	Log(INFO, infoMsg)
+//	var err error
+//
+//	switch fn := f.(type) {
+//	case func() error:
+//		err = fn()
+//	case func() (interface{}, error):
+//		_, err = fn()
+//	default:
+//		Log(ERRO, "Unsupported function type")
+//		os.Exit(1)
+//	}
+//
+//	if err != nil {
+//		_, file, line, _ := runtime.Caller(1)
+//		errMsg := fmt.Sprintf("%s:%d - %v", file, line, err)
+//		Log(ERRO, errMsg)
+//		os.Exit(1)
+//	} else {
+//		Log(INFO, okMsg)
+//	}
+//}
 
 func Debug(msg string) {
 	Log(DEBU, msg)
@@ -63,4 +63,44 @@ func (l LogLevel) String() string {
 
 func (l LogLevel) Color() string {
 	return [...]string{BgBlue, BgGreen, BgYellow, BgRed}[l]
+}
+
+func CheckFuncErr(infoMsg string, f interface{}, okMsg string) {
+	Log(INFO, infoMsg)
+	var err error
+
+	switch fn := f.(type) {
+	case func() error:
+		err = fn()
+	case func() (interface{}, error):
+		_, err = fn()
+	default:
+		Log(ERRO, "Unsupported function type")
+		os.Exit(1)
+	}
+
+	if err != nil {
+		_, file, line, _ := runtime.Caller(1)
+		errMsg := fmt.Sprintf("%s:%d - %v", file, line, err)
+		Log(ERRO, errMsg)
+		os.Exit(1)
+	} else {
+		Log(INFO, okMsg)
+	}
+}
+
+func CheckServer(infoMsg string, f func() error, okMsg string) {
+	Log(INFO, infoMsg)
+
+	go func() {
+		err := f()
+		if err != nil {
+			_, file, line, _ := runtime.Caller(1)
+			errMsg := fmt.Sprintf("%s:%d - %v", file, line, err)
+			Log(ERRO, errMsg)
+			os.Exit(1)
+		}
+	}()
+	time.Sleep(100 * time.Millisecond)
+	Log(INFO, okMsg)
 }
