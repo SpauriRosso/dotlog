@@ -98,7 +98,7 @@ func CheckServer(infoMsg string, f func() error, okMsg string) {
 			_, file, line, _ := runtime.Caller(1)
 			errMsg := fmt.Sprintf("%s:%d - %v", file, line, err)
 			Log(ERRO, errMsg)
-			os.Exit(1)
+			//os.Exit(1)
 		}
 	}()
 	time.Sleep(100 * time.Millisecond)
