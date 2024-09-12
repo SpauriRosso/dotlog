@@ -48,7 +48,7 @@ func Error(msg string) {
 }
 
 func Log(level LogLevel, msg string) {
-	timeNow := time.Now().Format("2006-02-01 - 15:01:05")
+	timeNow := time.Now().Format("2006-02-01 - 15:04:05")
 	color := fmt.Sprintf("%s%s%s%s", level.Color(), White, level, Reset)
 	fmt.Printf("%s %s %s\n", timeNow, color, msg)
 }
